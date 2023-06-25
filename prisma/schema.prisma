@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  email        String        @id
+  qr           String        @unique
+  check        Boolean       @default(false)
+  completed    Completed[]
+  hackerApp    HackerApp?
+  volunteerApp VolunteerApp?
+}
+
+model HackerApp {
+  firstName  String?
+  lastName   String?
+  phone      String?
+  age        Int?
+  yog        Int?
+  school     String?
+  country    String?
+  diet       String?
+  shirt      String?
+  experience Int?
+  outreach   String?
+  conduct    Boolean?
+  privacy    Boolean?
+  user       User     @relation(fields: [userEmail], references: [email])
+  userEmail  String   @id
+}
+
+model VolunteerApp {
+  firstName   String?
+  lastName    String?
+  phone       String?
+  age         Int?
+  role        String? // volunteer, mentor, judge, sponsor
+  affiliation String? // school/company
+  diet        String?
+  shirt       String?
+  user        User    @relation(fields: [userEmail], references: [email])
+  userEmail   String  @id
+}
+
+enum Item {
+  HACKERAPP
+  VOLUNTEERAPP
+  RSVP
+}
+
+model Completed {
+  item      Item    @id
+  User      User?   @relation(fields: [userEmail], references: [email])
+  userEmail String?
+}
